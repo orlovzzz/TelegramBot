@@ -34,30 +34,22 @@ public class TelegramBot extends TelegramLongPollingBot {
             Message message = update.getMessage();
             String chatId = message.getChatId().toString();
             String currentMessage = message.getText();
+            SendMessage answer = new SendMessage();
+            answer.setChatId(chatId);
             if (currentMessage.equals("/start")) {
-                SendMessage answer = new SendMessage(chatId, "Hello, I'm a bot for finding statistics in Dota 2. Enter your Steam ID.");
-                try {
-                    execute(answer);
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
+                answer.setText("Hello, I'm a bot for finding statistics in Dota 2. Enter your Steam ID.");
             }
             if (currentMessage.matches("\\d+") && currentMessage.length() == 17) {
                 getStats.getId(currentMessage);
-                SendMessage answer = new SendMessage(chatId, "The statistics are ready. Enter /stats to see it.");
-                try {
-                    execute(answer);
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
+                answer.setText("The statistics are ready. Enter /stats to see it.");
             }
             if (currentMessage.equals("/stats")) {
-                SendMessage answer = new SendMessage(chatId, getStats.statsToString());
-                try {
-                    execute(answer);
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
+                answer.setText(getStats.statsToString());
+            }
+            try {
+                execute(answer);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
             }
         }
     }
