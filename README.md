@@ -1,2 +1,2 @@
 # Dota Stats
-Telegram Bot for check your matches statistic in Dota 2.
+Telegram bot for checking your match statistics in Dota 2
