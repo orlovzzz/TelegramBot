@@ -44,7 +44,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 answer.setText("The statistics are ready. Enter /stats to see it.");
             }
             if (currentMessage.equals("/stats")) {
-                answer.setText(getStats.statsToString());
+                answer.setText(getStats.statsToString() + "\nTo view the win rate, visit the address http://localhost:8080");
             }
             try {
                 execute(answer);

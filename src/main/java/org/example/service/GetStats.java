@@ -1,5 +1,7 @@
 package org.example.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -11,10 +13,14 @@ import org.example.entity.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
+
 import java.math.BigInteger;
 
 @Service
 public class GetStats {
+
+    private int n = 10;
 
     private OkHttpClient client = new OkHttpClient();
     private Gson gson = new Gson();
@@ -31,6 +37,17 @@ public class GetStats {
         } else {
             return "Lose";
         }
+    }
+
+    public void getStatsForPage(Model model) {
+        model.addAttribute("countMatches", n);
+        double win = 0;
+        for (int i = 0; i < 10; i++) {
+            if ((isWin(account.getGameStats()[i].isRadiantWin(), account.getGameStats()[i].getCurrentGame().getPlayer().isRadiant())).equals("Win")) {
+                win++;
+            }
+        }
+        model.addAttribute("winRate", String.format("%.2f", (win / n) * 100) + "%");
     }
 
     public String statsToString() {
@@ -60,9 +77,9 @@ public class GetStats {
             if (response.isSuccessful()) {
                 String jsonResponse = response.body().string();
                 GameStats[] matchesStats = gson.fromJson(jsonResponse, GameStats[].class);
-                if (matchesStats.length > 5) {
-                    GameStats[] temp = new GameStats[5];
-                    System.arraycopy(matchesStats, 0, temp, 0,5);
+                if (matchesStats.length > n) {
+                    GameStats[] temp = new GameStats[n];
+                    System.arraycopy(matchesStats, 0, temp, 0, n);
                     account.setGameStats(temp);
                 }
                 getCurrentGameStats(account.getGameStats());
@@ -106,4 +123,7 @@ public class GetStats {
         return result.toString();
     }
 
+    public AccountInfo getAccount() {
+        return account;
+    }
 }
